@@ -7,7 +7,7 @@ import HomePage from './pages/homepage/homepage.component';
 import Shop from './pages/shop/shop.component';
 import Signin from './pages/signin_up/signinup.component';
 import Header from './components/header/header.component';
-import { auth } from './components/firebase/firebase.utils';
+import { auth,createUserProfDoc } from './components/firebase/firebase.utils';
 
 class App extends React.Component{
   constructor(props) {
@@ -21,9 +21,27 @@ class App extends React.Component{
   autologout=null;
 
   componentDidMount(){
-    this.autologout = auth.onAuthStateChanged(user=>{
-      this.setState({current_user:user})
-      console.log(user);
+    this.autologout = auth.onAuthStateChanged(async userAuth=>{
+      // this.setState({current_user:user})
+      // createUserProfDoc(user);
+      // console.log(user);
+      if(userAuth){
+        const user=await createUserProfDoc(userAuth);
+        user.onSnapshot(snapShot=>{
+          // console.log(snapShot.data());
+          this.setState({
+            current_user:{
+              id:snapShot.id,
+              ...snapShot.data()
+            }
+          });
+
+          console.log(this.state.current_user);
+        });
+      }
+      else{
+        this.setState({current_user:userAuth});
+      }
     });
   }
 
