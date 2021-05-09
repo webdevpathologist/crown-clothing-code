@@ -4,6 +4,7 @@ import { createStructuredSelector} from 'reselect';
 
 import CheckOutItem from '../../components/checkout-item/checkout.item.component';
 import {SelectCartItems,SelectCartSum} from '../../redux/cart/cart.selectors';
+import StripeCheckoutButton from '../../components/stripe-button/stripe.button.component';
 
 import './checkout.styles.scss';
 
@@ -33,6 +34,16 @@ const CheckOut=({cartitems,totalvalue})=>(
         }
 
         <div className='total'>{totalvalue}</div>
+        <div className='test-warning'>   
+            As this is a Test Build, Use the Card details below when placing orders
+            <br/><br/>
+            Card Number : 4242 4242 4242 4242
+            <br/>
+            Expiry Date : 01/22
+            <br/>
+            CVV : Any 3 numbers of your choice 😜
+        </div>
+        <StripeCheckoutButton price={totalvalue}/>
 
     </div>
 );
