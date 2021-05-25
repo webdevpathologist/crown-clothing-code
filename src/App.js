@@ -10,9 +10,11 @@ import Shop from './pages/shop/shop.component';
 import Signin from './pages/signin_up/signinup.component';
 import Header from './components/header/header.component';
 import CheckOut from './pages/checkout/checkout.component';
-import { auth,createUserProfDoc } from './components/firebase/firebase.utils';
+import { auth,createUserProfDoc} from './components/firebase/firebase.utils';
+// import { addCollectionAndDocuments } from './components/firebase/firebase.utils';
 import {setCurrentUser} from './redux/user/user.actions';
 import {SelectCurrentUser} from './redux/user/user.selectors';
+// import {SelectCollectionPreview}  from './redux/shop/shop.selector';
 
 class App extends React.Component{
   constructor(props) {
@@ -23,12 +25,13 @@ class App extends React.Component{
     }
   }
 
-  autologout=null;
+  autologout_auth=null;
 
   componentDidMount(){
     const {setCurrentUser} = this.props;
+    // const {collectionArray} = this.props;
 
-    this.autologout = auth.onAuthStateChanged(async userAuth=>{
+    this.autologout_auth = auth.onAuthStateChanged(async userAuth=>{
       // this.setState({current_user:user})
       // createUserProfDoc(user);
       // console.log(user);
@@ -46,15 +49,16 @@ class App extends React.Component{
 
           // console.log(this.state.current_user);
       }
-      else{
+      // else{
         setCurrentUser(userAuth);
-      }
+        // addCollectionAndDocuments('collections',collectionArray.map(({title,items})=>({title,items})));
+      // }
       
     });
   }
 
   componentWillUnmount(){
-    this.autologout();
+    this.autologout_auth();
   }
 
   render() {
@@ -80,6 +84,7 @@ class App extends React.Component{
 
 const mapStatetoProps=createStructuredSelector({
   current_user:SelectCurrentUser
+  // collectionArray:SelectCollectionPreview
 
 })
 

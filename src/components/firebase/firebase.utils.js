@@ -11,7 +11,7 @@ const config={
     messagingSenderId: "914444432607",
     appId: "1:914444432607:web:c9e9eab2de8be25a6de56a",
     measurementId: "G-REJJKW6CZV"
-  }
+  };
 
 export const createUserProfDoc=async(userAuth,otherData)=>{
   if(!userAuth) return;
@@ -20,7 +20,7 @@ export const createUserProfDoc=async(userAuth,otherData)=>{
   const user=firestore.doc(`users/${userAuth.uid}`);
 
   const snapshot=await user.get();
-  console.log(snapshot);
+  // console.log(snapshot);
 
   if(!snapshot.exists){
     const {displayName,email}=userAuth;
@@ -39,6 +39,45 @@ export const createUserProfDoc=async(userAuth,otherData)=>{
     }
   }
   return user;
+};
+
+
+export const addCollectionAndDocuments=async (collectionKey,objectsToAdd)=>{
+  const collectionRef=firestore.collection(collectionKey);
+  // console.log(collectionRef);
+  // console.log(objectsToAdd);
+
+  const batchWrite=firestore.batch();
+  objectsToAdd.forEach(element => { 
+    const newDocRef=collectionRef.doc(element.title);
+    // console.log(newDocRef);  
+    batchWrite.set(newDocRef,element); 
+
+  });
+
+  return await batchWrite.commit();
+
+};
+
+export const convertCollectionsSnapshotToMap=(collections)=>{
+
+  const transformedCollection=collections.docs.map(doc=>{
+  
+    const {title,items}=doc.data();
+    return{
+      routeName:encodeURI(title.toLowerCase()),
+      id:doc.id,
+      title,
+      items
+    }
+  });
+
+  // console.log(transformedCollection);
+  return transformedCollection.reduce((accumulator,collection)=>{
+    accumulator[collection.title.toLowerCase()]=collection;
+    return accumulator;
+  },{})
+
 }
 
 firebase.initializeApp(config);
